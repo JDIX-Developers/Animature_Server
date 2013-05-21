@@ -72,6 +72,12 @@ if (is_ssl() && is_animature() && isset($_POST['action']) && ! empty($_POST['act
 				{
 					$token = md5($_POST['email'].$_POST['pass'].microtime(TRUE)."--Animature");
 					db()->query("INSERT INTO `sessions` VALUES ('".$token."', (SELECT `id` FROM `users` WHERE `email` = '".db()->real_escape_string($_POST['email'])."'), ".(time()+7200).");");
+					$query = db()->query("SELECT `username` FROM `users` WHERE `email` ='".db()->real_escape_string($_POST['email'])."';");
+
+					while($row = $query->fetch_row())
+					{
+						$username = $row[0];
+					}
 				}
 
 				if ($_POST['method'] === 'manual')
@@ -82,6 +88,7 @@ if (is_ssl() && is_animature() && isset($_POST['action']) && ! empty($_POST['act
 				if (isset($token))
 				{
 					$result['token'] = $token;
+					$result['user'] = $username;
 				}
 			}
 			else
